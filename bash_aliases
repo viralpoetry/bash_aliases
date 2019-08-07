@@ -11,6 +11,14 @@ alias kluce='vim ~/.ssh/config'
 alias sslreq='openssl req -noout -text -in'
 alias sslcert='openssl x509 -noout -text -in'
 
+tardir() {
+    tar -zcvf $1.tar.gz $1
+}
+
+untardir() {
+    tar -zxvf $1 "${1%.tar.gz}"
+}
+
 devvault() {
   echo "Insert DEV vault password: "
   read -sr VAULT_PASSWD
