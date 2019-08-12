@@ -16,7 +16,7 @@ tardir() {
 }
 
 untardir() {
-    tar -zxvf $1 "${1%.tar.gz}"
+    tar -zxvf $1
 }
 
 devvault() {
