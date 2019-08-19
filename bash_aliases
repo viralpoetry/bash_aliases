@@ -8,6 +8,7 @@ VAULT_AUTH_PATH = 'ldap'
 alias ag='ag --hidden'
 alias fn='ssh -fN jumphost'
 alias kluce='vim ~/.ssh/config'
+alias venv='source ~/projects/venv/bin/activate'
 alias sslreq='openssl req -noout -text -in'
 alias sslcert='openssl x509 -noout -text -in'
 
