@@ -28,8 +28,16 @@ devvault() {
   unset VAULT_TOKEN
   r=$(curl -s --request POST --data '{"password": "'"$VAULT_PASSWD"'"}' $VAULT_ADDR/v1/auth/$VAULT_AUTH_PATH/login/$DEV_VAULT_USER)
   token=$(echo "$r" | jq -r '.auth.client_token')
-  export VAULT_TOKEN=$token
-  echo "Dev vault authenticated."
+  if [ "$token" = "null" ]
+  then
+      echo "Error: token not present in response."
+  else
+      export VAULT_TOKEN=$token
+      echo "Dev vault authenticated."
+  fi
+  unset VAULT_PASSWD
+  unset token
+  unset r
 }
 
 prodvault() {
@@ -40,6 +48,14 @@ prodvault() {
   unset VAULT_TOKEN
   r=$(curl -s --request POST --data '{"password": "'"$VAULT_PASSWD"'"}' $VAULT_ADDR/v1/auth/$VAULT_AUTH_PATH/login/$PROD_VAULT_USER)
   token=$(echo "$r" | jq -r '.auth.client_token')
-  export VAULT_TOKEN=$token
-  echo "Prod vault authenticated."
+  if [ "$token" = "null" ]
+  then
+      echo "Error: token not present in response."
+  else
+      export VAULT_TOKEN=$token
+      echo "Dev vault authenticated."
+  fi
+  unset VAULT_PASSWD
+  unset token
+  unset r
 }
