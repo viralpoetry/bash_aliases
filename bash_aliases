@@ -13,48 +13,32 @@ alias venv='source ~/projects/venv/bin/activate'
 alias sslreq='openssl req -noout -text -in'
 alias sslcert='openssl x509 -noout -text -in'
 
-tardir() {
-    tar -zcvf "$1.tar.gz" "$1"
-}
+function devvault() { __vault_auth "dev" "$DEV_VAULT_ADDR" "$DEV_VAULT_USER"; }
+function prodvault() { __vault_auth "prod" "$PROD_VAULT_ADDR" "$PROD_VAULT_USER"; }
 
-untardir() {
-    tar -zxvf "$1"
-}
-
-devvault() {
-  echo "Insert DEV vault password: "
+function __vault_auth() {
+  echo "Insert $1 password: "
   read -sr VAULT_PASSWD
-  export VAULT_ADDR=$DEV_VAULT_ADDR
+  export VAULT_ADDR=$2
   unset VAULT_TOKEN
-  r=$(curl -s --request POST --data '{"password": "'"$VAULT_PASSWD"'"}' $VAULT_ADDR/v1/auth/$VAULT_AUTH_PATH/login/$DEV_VAULT_USER)
+  r=$(curl -s --request POST --data '{"password": "'"$VAULT_PASSWD"'"}' $VAULT_ADDR/v1/auth/$VAULT_AUTH_PATH/login/$3)
   token=$(echo "$r" | jq -r '.auth.client_token')
   if [ "$token" = "null" ]
   then
       echo "Error: token not present in response."
   else
       export VAULT_TOKEN=$token
-      echo "Dev vault authenticated."
+      echo "$1 vault authenticated."
   fi
   unset VAULT_PASSWD
   unset token
   unset r
 }
 
-prodvault() {
-  echo "Insert PROD vault password: "
-  read -sr VAULT_PASSWD
-  export VAULT_ADDR=$PROD_VAULT_ADDR
-  unset VAULT_TOKEN
-  r=$(curl -s --request POST --data '{"password": "'"$VAULT_PASSWD"'"}' $VAULT_ADDR/v1/auth/$VAULT_AUTH_PATH/login/$PROD_VAULT_USER)
-  token=$(echo "$r" | jq -r '.auth.client_token')
-  if [ "$token" = "null" ]
-  then
-      echo "Error: token not present in response."
-  else
-      export VAULT_TOKEN=$token
-      echo "Prod vault authenticated."
-  fi
-  unset VAULT_PASSWD
-  unset token
-  unset r
-}
+# tardir() {
+#     tar -zcvf "$1.tar.gz" "$1"
+# }
+#
+# untardir() {
+#     tar -zxvf "$1"
+# }
